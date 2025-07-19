@@ -5,6 +5,8 @@ echo Setup Starting........
 
 sudo apt-get install ruby   
 echo ""
+sudo apt install file
+echo ""
 sudo apt install readpe
 echo ""
 sudo gem install colorize
