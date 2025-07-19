@@ -9,8 +9,6 @@ sudo apt install readpe
 echo ""
 sudo gem install colorize
 echo ""
-sudo gem install readelf
-echo ""
 sudo apt install binutils
 echo ""
 sudo cp youprotect /usr/bin
