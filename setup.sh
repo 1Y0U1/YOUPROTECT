@@ -11,6 +11,8 @@ sudo gem install colorize
 echo ""
 sudo gem install readelf
 echo ""
+sudo apt install binutils
+echo ""
 sudo cp youprotect /usr/bin
 sudo chmod +x /usr/bin/youprotect
 echo "\n***done***\n"
