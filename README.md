@@ -22,4 +22,14 @@ Whether you're auditing malware, patching exploits, or building hardened binarie
 - **Digital Signature Check** – Verifies if the binary is signed
 -  Checks if binary is **stripped
 
+#OUTPUT
 <img width="1821" height="2000" alt="Screenshot (557)" src="https://github.com/user-attachments/assets/cb2a874b-59e9-4f00-871b-5f656fc50958" />
+
+#Installation
+git clone https://github.com/1Y0U1/YOUPROTECT.git <br>
+
+cd YOUPROTECT
+
+chmod +x setup.sh
+
+bash setup.sh
