@@ -23,7 +23,7 @@ Whether you're auditing malware, patching exploits, or building hardened binarie
 -  Checks if binary is **stripped
 
 # OUTPUT
-<img width="1821" height="2000" alt="Screenshot (557)" src="https://github.com/user-attachments/assets/cb2a874b-59e9-4f00-871b-5f656fc50958" />
+<img width="1896" height="516" alt="Screenshot_2025-07-25_03_40_21" src="https://github.com/user-attachments/assets/a4fec00f-cf02-4977-92c1-3ecc8e73a9ff" />
 
 # Installation 
 git clone https://github.com/1Y0U1/YOUPROTECT.git <br>
