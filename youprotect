@@ -146,7 +146,7 @@ def check_aslr_compatible(binary)
   if aslr.include?("IMAGE_DLLCHARACTERISTICS_DYNAMIC_BASE")
     puts "[+] ASLR Compatible".colorize(:red).bold
   else 
-    puts "[-] ASLR Not Compatible".colorize(:red).bold
+    puts "[-] ASLR Not Compatible"
   end
 end
 
