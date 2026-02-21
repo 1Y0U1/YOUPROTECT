@@ -100,9 +100,9 @@ end
 def check_seh(binary)
   seh = `readpe #{binary} 2>/dev/null`
   if seh.include?(".pdata") && seh.include?(".xdata")
-    puts "[+] SEH Present: .xdata and .pdata found".colorize(:red).bold
+    puts "[+] SEH Enabled: .xdata and .pdata found".colorize(:red).bold
   else
-    puts "[-] SEH NOT Present: .xdata / .pdata not found".colorize(:red).bold
+    puts "[-] SEH Disabled: .xdata / .pdata not found".colorize(:red).bold
   end
 end
 
