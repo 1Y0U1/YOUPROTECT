@@ -150,6 +150,16 @@ def check_aslr_compatible(binary)
   end
 end
 
+#Check IAT protection
+
+def check_iat_protection(binary)
+  iat = `readpe #{binary} 2>/dev/null`
+  if iat.include?("IMAGE_DLLCHARACTERISTICS_NO_BIND")
+    puts "[+] IAT Protection Enabled".colorize(:red).bold
+  else
+    puts "[-] IAT Protection Disabled".colorize(:red).bold
+  end
+end
 
 #check digital signature
 def check_digital_signature(binary)
@@ -192,6 +202,7 @@ check_safeseh(binary)
 check_stack_cookies(binary)
 check_cfg(binary)
 check_aslr_compatible(binary)
+check_iat_protection(binary)
 check_digital_signature(binary)
 puts "================================================="
 
