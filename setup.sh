@@ -13,6 +13,8 @@ sudo gem install colorize
 echo ""
 sudo apt install binutils
 echo ""
+sudo apt install objdump
+echo ""
 sudo cp youprotect /usr/bin
 sudo chmod +x /usr/bin/youprotect
 echo "\n***done***\n"
