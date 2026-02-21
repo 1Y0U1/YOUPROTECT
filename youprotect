@@ -155,9 +155,9 @@ end
 def check_iat_protection(binary)
   iat = `readpe #{binary} 2>/dev/null`
   if iat.include?("IMAGE_DLLCHARACTERISTICS_NO_BIND")
-    puts "[+] IAT Protection Enabled".colorize(:red).bold
+    puts "[+] IAT (RELRO) Protection Enabled".colorize(:red).bold
   else
-    puts "[-] IAT Protection Disabled"
+    puts "[-] IAT (RELRO) Protection Disabled"
   end
 end
 
