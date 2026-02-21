@@ -157,7 +157,7 @@ def check_iat_protection(binary)
   if iat.include?("IMAGE_DLLCHARACTERISTICS_NO_BIND")
     puts "[+] IAT Protection Enabled".colorize(:red).bold
   else
-    puts "[-] IAT Protection Disabled".colorize(:red).bold
+    puts "[-] IAT Protection Disabled"
   end
 end
 
