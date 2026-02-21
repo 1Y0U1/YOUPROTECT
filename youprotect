@@ -3,7 +3,6 @@ require 'colorize'
 
 binary = ARGV[0]
 
-output = `readpe #{binary} 2>/dev/null`
 
 def tool()
    puts `figlet YOUPROTECT`.colorize(:red).bold
@@ -27,8 +26,8 @@ end
 
 #Stripped_Check
 def check_stripped_binary(binary)
-  detect = `file #{binary}`
-  if detect.include?('not stripped')
+  stripped = `file #{binary}`
+  if stripped.include?('not stripped')
     puts "[-] Not Stripped"
      else
       puts "[+] Stripped Binary".colorize(:red).bold
@@ -39,8 +38,8 @@ end
 
 #Check_NX
 def check_nx(binary)
-  prog_headers = `readelf -W -l #{binary} 2>/dev/null`
-  if prog_headers.match?(/GNU_STACK.*RWE/)
+  nx = `readelf -W -l #{binary} 2>/dev/null`
+  if nx.match?(/GNU_STACK.*RWE/)
    puts "[-] NX Disabled"
   else
     puts  "[+] NX Enabled".colorize(:red).bold
@@ -50,8 +49,8 @@ end
 
 #Check_canary
 def check_canary(binary)
-  output = `readelf -s #{binary} 2>/dev/null`
-  if output.include?("__stack_chk_fail")
+  canary = `readelf -s #{binary} 2>/dev/null`
+  if canary.include?("__stack_chk_fail")
     puts "[+] Canary Found (Enabled)".colorize(:red).bold
   else
     puts "[-] Canary Not Found (Disabled)"
@@ -61,8 +60,8 @@ end
 
 #Check_PIE
 def check_pie(binary)
-  type_info = `readelf -h #{binary} 2>/dev/null`
-  if type_info.include?("DYN")
+  pie = `readelf -h #{binary} 2>/dev/null`
+  if pie.include?("DYN")
    puts "[+] PIE Enabled".colorize(:red).bold
   else
     puts "[-] PIE Disabled"
@@ -86,9 +85,10 @@ def check_relro(binary)
 end
 
 
-#checek dep_nx exe
-def check_dep_nx(output)
-  if output.include?("IMAGE_DLLCHARACTERISTICS_NX_COMPAT")
+#check dep_nx exe
+def check_dep_nx(binary)
+  dep_nx = `readpe #{binary} 2>/dev/null`
+  if dep_nx.include?("IMAGE_DLLCHARACTERISTICS_NX_COMPAT")
     puts "[+] DEP (NX) Enabled".colorize(:red).bold
   else
     puts "[-] DEP (NX) NOT Enabled"
@@ -96,36 +96,42 @@ def check_dep_nx(output)
 end
 
 
-
-def check_seh(output)
-  if output.include?("IMAGE_DLLCHARACTERISTICS_NO_SEH") 
-    puts "[+] SEH Present (NO_SEH not set)".colorize(:red).bold
+#Check seh
+def check_seh(binary)
+  seh = `readpe #{binary} 2>/dev/null`
+  if seh.include?(".pdata") && seh.include?(".xdata")
+    puts "[+] SEH Present: .xdata and .pdata found".colorize(:red).bold
   else
-    puts "[-] SEH NOT Present (NO_SEH is set)"
+    puts "[-] SEH NOT Present: .xdata / .pdata not found".colorize(:red).bold
   end
 end
 
-def check_safeseh(output)
-  if output.include?(".pdata") && output.include?(".xdata") 
-    puts "[+] SafeSEH Enabled:  Structured Exception Table Found".colorize(:red).bold
+#check safeSeh
+def check_safeseh(binary)
+  safe_seh = `readpe #{binary} 2>/dev/null`
+  if safe_seh.include?("IMAGE_DLLCHARACTERISTICS_NO_SEH")
+    puts "[-] SafeSEH Disabled: NO_SEH is set".colorize(:red).bold
   else
-    puts "[-] SafeSEH Disabled:  Structured Exception Info Missing"
+    puts "[+] SafeSEH Enabled: NO_SEH not set".colorize(:red).bold
   end
 end
 
 
 #check stack_cookies
-def check_stack_cookies(output)
-  if output.include?("__security_cookie")
+def check_stack_cookies(binary)
+  stack_cookies = `objdump -d #{binary} 2>/dev/null` 
+  if stack_cookies.include?("__stack_chk_fail") 
     puts "[+] Stack Cookies Enabled (/GS)".colorize(:red).bold
   else
     puts "[-] Stack Cookies NOT Enabled"
   end
 end
 
+
 #check cfg
-def check_cfg(output)
-  if output.include?("IMAGE_DLLCHARACTERISTICS_GUARD_CF") || output.include?("GuardFlags")
+def check_cfg(binary)
+  cfg = `readpe #{binary} 2>/dev/null`
+  if cfg.include?("IMAGE_DLLCHARACTERISTICS_GUARD_CF") || cfg.include?("GuardFlags")
     puts "[+] Control Flow Guard (CFG) Enabled".colorize(:red).bold
   else
     puts "[-] CFG NOT Enabled"
@@ -133,9 +139,22 @@ def check_cfg(output)
 end
 
 
+
+#check Aslr Compatible
+def check_aslr_compatible(binary)
+  aslr = `readpe #{binary} 2>/dev/null`
+  if aslr.include?("IMAGE_DLLCHARACTERISTICS_DYNAMIC_BASE")
+    puts "[+] ASLR Compatible".colorize(:red).bold
+  else 
+    puts "[-] ASLR Not Compatible".colorize(:red).bold
+  end
+end
+
+
 #check digital signature
-def check_digital_signature(output)
-  if output.include?("Security Directory")
+def check_digital_signature(binary)
+  digital_sign = `readpe #{binary} 2>/dev/null`
+  if digital_sign.include?("Security Directory")
     puts "[+] Digitally Signed".colorize(:red).bold
   else
     puts "[-] No Digital Signature"
@@ -167,12 +186,13 @@ sleep 2
 puts ""
 puts "====== Windows protection check is sketchy — trust it like you trust public Wi-Fi======".colorize(:yellow)
 sleep 1
-check_dep_nx(output)
-check_seh(output)
-check_safeseh(output)
-check_stack_cookies(output)
-check_cfg(output)
-check_digital_signature(output)
+check_dep_nx(binary)
+check_seh(binary)
+check_safeseh(binary)
+check_stack_cookies(binary)
+check_cfg(binary)
+check_aslr_compatible(binary)
+check_digital_signature(binary)
 puts "================================================="
 
 
